@@ -1,0 +1,18 @@
+SELECT * FROM person;
+
+SELECT * FROM person limit 0;
+
+SELECT * FROM certificates;
+
+SELECT person.name, person.id, certificates.name as cert 
+FROM certificates, person 
+WHERE certificates.name = 'AZ-104' AND certificates.person_id = person.id;
+
+ #   SQL = "SELECT person.name, person.id, certificates.name as cert FROM certificates, person WHERE certificates.name = 'AZ-104' AND certificates.person_id = person.id;"
+
+INSERT INTO certificates (name,person_id) VALUES ('AZ-104', 5);
+
+#     SQL = "INSERT INTO certificates (name,person_id) VALUES ('AZ-104', 5);"
+
+
+TABLE person;
