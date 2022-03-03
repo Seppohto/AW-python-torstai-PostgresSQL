@@ -52,61 +52,56 @@ def az_cert_owners(cur):
         print(row)
         row = cur.fetchone()
 
-def insert_to_table_certificates(con,cur,nimi, personid):
+def insert_to_table_certificates(cur,nimi, personid):
     SQL = "INSERT INTO certificates (name,person_id) VALUES (%s, %s);"
     data = (nimi,personid)
     cur.execute(SQL, data)
-    con.commit()
     
-def update_person(con,cur,id, name, age, student):
+def update_person(cur,id, name, age, student):
     SQL = "UPDATE person SET name=%s, age=%s, student=%s WHERE id=%s;"
     data = (name,age,student,id)
     cur.execute(SQL, data)
-    con.commit()
-    
     print('row updated')
 
-
-def update_certificate(con,cur,id, name, personid):
+def update_certificate(cur,id, name, personid):
     SQL = "UPDATE certificates SET name=%s, person_id=%s WHERE id=%s;"
     data = (name, personid, id)
-    cur.execute(SQL, data)
-    con.commit()
-            
+    cur.execute(SQL, data)            
     print('row updated')
 
-def delete_fromcertificates(con,cur,id):
+def delete_fromcertificates(cur,id):
     SQL = "DELETE FROM certificates WHERE id=%s;"
     data = (id,)
     cur.execute(SQL, data)
-    con.commit()
             
     print('row updated')
 
-def delete_fromperson(con,cur,id):
-        con = psycopg2.connect(**config())
-        cur = con.cursor()
+def delete_fromperson(cur,id):
         SQL = "DELETE FROM person WHERE id=%s;"
         data = (id,)
         cur.execute(SQL, data)
-        con.commit()
                 
         print('row updated')
 
-def create_tables(con,cur):
+def create_tables(cur):
     commands = (
         """
-        CREATE TABLE rahaa (
-            tili_id SERIAL PRIMARY KEY,
-            tili_omistajaname VARCHAR(255) NOT NULL
-            tili_rahaa INT
+        CREATE TABLE blobkuvat (
+            blob_id SERIAL PRIMARY KEY,
+            blob_osoite VARCHAR(255) NOT NULL,
+            blob_accountname VARCHAR(255),
+            blob_name VARCHAR(255),
+            blob_personid INT            
         )
         """,)
 
     for command in commands:
         cur.execute(command)
 
-    con.commit()
+
+def create_tables2(cur):
+    SQL = "CREATE TABLE pankki1 (PersonID SERIAL PRIMARY KEY, name varchar(255) NOT NULL, rahat INT);"
+    cur.execute(SQL)
 
 def valinta(con,cur):
     print('0: select_allfromperson()')
@@ -119,6 +114,7 @@ def valinta(con,cur):
     print('7: delete_fromcertificates(id)')
     print('8: delete_fromperson')
     print('9: create tables')
+    print('10: create tables2')
     action = int(input("mitä suoritetaan: "))
     if action == 0:
         select_allfromperson(cur)
@@ -139,34 +135,26 @@ def valinta(con,cur):
         name = input('Anna name: ')
         age = input("Anna ikä: ")
         student = input('Onko opiskelija (true,false): ')
-        update_person(con,cur,id, name, age, student)
+        update_person(cur,id, name, age, student)
     elif action == 6:
         show_cert(cur)
         id = int(input('Anna muokattavan rivin id: '))
         name = input('Anna certiname: ')
         personid = int(input("Anna hlöid: "))
-        update_certificate(con,cur,id, name, personid)
+        update_certificate(cur,id, name, personid)
     elif action == 7:
         show_cert(cur)
         id = int(input('poistettavan rivin id: '))
-        delete_fromcertificates(con,cur,id)
+        delete_fromcertificates(cur,id)
     elif action == 8:
         select_allfromperson(cur)
         id = int(input('poistettavan rivin id: '))
-        delete_fromperson(con,cur,id)
+        delete_fromperson(cur,id)
     elif action == 9:
-        create_tables(con,cur)
+        create_tables(cur)
+    elif action == 10:
+        create_tables2(cur)
 
-""" 0: select_allfromperson()
-    1: show_person_columns()
-    2: show_cert()
-    3: az_cert_owners()
-    4: insert_to_table_certificates(nimi,personid)
-    5: update_person(id, name, age, student)
-    6: update_certificate(id, name, personid)
-    7: delete_fromcertificates(id)
-    8: delete_fromperson(id)
-    9: create_tables() """
     
 if __name__ == '__main__':
     connect()
